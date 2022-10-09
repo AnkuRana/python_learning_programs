@@ -44,11 +44,9 @@ start_game  = input("Do you want to play blackjack game 'y' or 'n'! : ")
 
 if start_game == 'n':
     want_to_play = False
-else:
-    clear()
-    print(dic_arts[9])
 
 while want_to_play:
+    print(dic_arts[9])
     for i in range(0,2):
         user_cards.append(dealer_hit())
         dealer_cards.append(dealer_hit())
@@ -100,10 +98,10 @@ while want_to_play:
     start_game  = input("Do you want to play blackjack game 'y' or 'n'! : ")
     if start_game == "n":
         want_to_play = False
+    else:
+        clear()
+    
     user_cards.clear()
     dealer_cards.clear()
 
-print("\nPlease come again to play blackjack")    
-        
-            
-    
+print("\nPlease come again to play blackjack")
