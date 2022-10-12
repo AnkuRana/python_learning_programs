@@ -1,6 +1,5 @@
 # Default ignored files
 /shelf/
-/workspace.xml
-/*.xml
-/*.pyc
-/*.iml
+*.xml
+*.pyc
+*.iml
