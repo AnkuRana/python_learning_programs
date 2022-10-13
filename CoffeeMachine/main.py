@@ -17,33 +17,38 @@ PENNY = 0.01
 def get_input():
     return input("What would you like? (espresso/latte/cappuccino/off/report):").lower()
 
+
 # Get the cost of coffee
 def get_coffee_cost(coffee_name):
     return MENU[coffee_name]['cost']
 
-# Return Requird Milk
+
+# Return Required Milk
 def get_required_milk(coffee_name):
     return MENU[coffee_name]['ingredients']['milk']
 
-# Return Requird Coffee
+
+# Return Required Coffee
 def get_required_coffee(coffee_name):
     return MENU[coffee_name]['ingredients']['coffee']
 
-# Return Requird Water
+
+# Return Required Water
 def get_required_water(coffee_name):
     return MENU[coffee_name]['ingredients']['water']
 
+
 # Check All available resources at a time
-def get_avail_resorces():
-    print(f"Coffee : {resources['coffee']}")
-    print(f"Milk : {resources['milk']}")
-    print(f"Water : {resources['water']}")
-    print(f"Money : {resources['money']}")
+def get_avail_resources():
+    print(f"Coffee : {resources['coffee']} g")
+    print(f"Milk : {resources['milk']} ml")
+    print(f"Water : {resources['water']} ml")
+    print(f"Money : ${resources['money']}")
 
 
-# List all input option's availaible to the user
+# List all input option's available to the user
 def list_all_options():
-    inputs_list = ["OFF", "REPORT", "COFFEE",["ESPRESSO", "LATTE", "CAPPUCCINO"]]
+    inputs_list = ["OFF", "REPORT", "COFFEE", ["ESPRESSO", "LATTE", "CAPPUCCINO"]]
     for i in range(0, 3):
         if i == 2:
             print(f" + {inputs_list[i]} : {inputs_list[i+1]}")
@@ -51,17 +56,18 @@ def list_all_options():
             print(f" + {inputs_list[i]}")
 
 
-# return Total money enetered by the user
+# return Total money entered by the user
 def process_coins():
     print("Please insert coins.")
 
     quarters_no = int(input("How many quarters?: "))
-    dimes_no = int(input("How many nicels?: "))
+    dimes_no = int(input("How many nickels?: "))
     nickels_no = int(input("How many nickels?: "))
     pennies_no = int(input("How many nickels?: "))
 
-    total_money =  (QUARTER * quarters_no) + (DIME * dimes_no) + (NICKEL * nickels_no) + (PENNY * pennies_no)
+    total_money = (QUARTER * quarters_no) + (DIME * dimes_no) + (NICKEL * nickels_no) + (PENNY * pennies_no)
     return total_money
+
 
 # process the transaction after coffee is selected and money entered
 def process_transaction(coffee_name):
@@ -96,16 +102,11 @@ def process_transaction(coffee_name):
         print(f"Here is your {coffee_name} coffee ☕. Enjoy!")
 
     else:
-        print("Sorry! Thats not enough money. Money refunded!")
-
+        print("Sorry! That's not enough money. Money refunded!")
 
 
 # Main code to run the machine
 def coffee_machine():
-    coffe_cost = 0
-    avail_water = 0
-    avail_coffee = 0
-    avail_milk = 0
     print("Welcome ! Please select one of the following!")
     list_all_options()
     user_input = get_input()
@@ -119,17 +120,18 @@ def coffee_machine():
     elif user_input == "latte":
         process_transaction(user_input)
     elif user_input == "report":
-        get_avail_resorces()
+        get_avail_resources()
     else:
         print(" *** Invalid Input. Try again! ***")
     return True
+
 
 should_continue = True
 print(logo)
 
 while should_continue:
     should_continue = coffee_machine()
-    if should_continue == False:
+    if not should_continue:
         break
     option = input("Do you want to use Coffee Machine again 'y' or 'n': ").lower()
     if option != 'y':
