@@ -51,4 +51,4 @@ class Snake:
 
     def down(self):
         if self.snake_head.heading() != UP:
-            self.snake_turtle[0].setheading(DOWN)
+            self.snake_head.setheading(DOWN)
