@@ -38,15 +38,17 @@ while is_game_on:
     # Detect collision with the wall
     if snake.snake_head.xcor() > 280 or snake.snake_head.xcor() < -280 \
             or snake.snake_head.ycor() > 280 or snake.snake_head.ycor() < -280:
-        is_game_on = False
-        scorecard.game_over()
+        scorecard.reset()
+        # scorecard.game_over()
+        snake.reset()
 
     # Detect collision with its own body or tail
     # passing the time when turtle is snake head used slicing
     for turtle in snake.snake_turtle[1:]:
         if snake.snake_head.distance(turtle) < 10:
-            is_game_on = False
-            scorecard.game_over()
+            scorecard.reset()
+            # scorecard.game_over()
+            snake.reset()
 
 
 screen.title("------- SNAKE GAME -----")
