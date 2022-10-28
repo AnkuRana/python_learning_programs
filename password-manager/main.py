@@ -1,8 +1,12 @@
 from tkinter import *
+from tkinter.ttk import *   # this class gives style to buttons
 from datetime import datetime
 from tkinter import messagebox
 import random
 import pyperclip
+import json
+YELLOW = "#f7f5dd"
+FONT_NAME = "Courier"
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 
@@ -25,6 +29,33 @@ def generate_password():
     password = "".join(password_list)
     pass_entry.insert(0, password)
     pyperclip.copy(password)  # This module let us copy whatever is there in clipboard
+# ---------------------------- SEARCH PASSWORD ------------------------------- #
+
+
+def search_password():
+    website_value = web_entry.get().lower()  # get the required data from the entry field
+    if website_value == "":
+        messagebox.showinfo(title="INFO", message="Please enter the website name to search database!")
+    else:
+        try:
+            with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.json",
+                      mode="r") as data_file:
+                data = json.load(data_file)
+        except FileNotFoundError:
+            messagebox.showinfo(title="INFO", message="Database is empty or not created!")
+        else:
+            # Check if any key is missing and throw warning or message
+            if website_value in data:
+                user_name = data[website_value]['username']
+                password = data[website_value]['password']
+                date_time = data[website_value]['datetime']
+                messagebox.showinfo(title=f"Website: {website_value}", message=f"UserName: {user_name}\n"
+                                                                               f"Password: {password}\n"
+                                                                               f"Saved Date: {date_time}\n\n"
+                                                                               f"Click ok to copy Password!")
+                pyperclip.copy(password)
+            else:
+                messagebox.showinfo(title="Website data not saved", message=f"Data for {website_value} not found!")
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
@@ -32,7 +63,7 @@ def generate_password():
 def write_to_secure_file():
     # global password_mng_data
     # temp_dic = {}
-    website_value = web_entry.get()  # get the required data from the entry field
+    website_value = web_entry.get().lower()  # get the required data from the entry field
     username_value = user_entry.get()
     password_value = pass_entry.get()
     now = datetime.now()
@@ -42,6 +73,13 @@ def write_to_secure_file():
     # temp_dic["username"] = username_value
     # temp_dic["password"] = password_value
     # password_mng_data[website_value] = temp_dic
+    new_data = {
+        website_value: {
+            "username": username_value,
+            "password": password_value,
+            "datetime": date_time,
+        }
+    }
     if website_value == "":
         msg += "Your website field is empty!\n"
     if username_value == "":
@@ -49,66 +87,83 @@ def write_to_secure_file():
     if password_value == "":
         msg += "Your password field is empty\n"
 
+    # if  there are empty values for the field that show warning
     if website_value == "" or username_value == "" or password_value == "":
         messagebox.showinfo(title="OOPS!", message=f"{msg}")
     else:
         is_ok = messagebox.askokcancel(title="Save Info", message=f"website: {website_value}\n"
                                        f"username: {username_value}\npassword: {password_value}\n")  # This return T/F
-
+    #  if the data entered is not empty and user wanted to save the data
     if is_ok:
-        with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.txt", mode="a")\
-                    as data:
-            data.write(f"[INFO]:{date_time} --> website: {website_value} | username: {username_value} "
-                       f"| password: {password_value}\n")
+        try:
+            with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.json",
+                      mode="r") as data_file:
+                current_data = json.load(data_file)  # loading the json file to current data
+                current_data.update(new_data)   # updating the current data with the new data
+        except FileNotFoundError:
+            with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.json",
+                      mode="w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.json",
+                      mode="w") as data_file:
+                json.dump(current_data, data_file, indent=4)  # writing the updated current data to json
+        finally:
             pass_entry.delete(0, END)  # Deletes data from entry start 0 and till end
             web_entry.delete(0, END)
 
 # ---------------------------- UI SETUP ------------------------------- #
 
 
+# Window
 window = Tk()
 window.title("Password Manager")
-window.config(padx=50, pady=50)
+window.config(padx=50, pady=50, bg=YELLOW)
 
-canvas = Canvas(width=200, height=200)
+# Canvas Widget
+canvas = Canvas(width=200, height=200, bg=YELLOW, highlightthickness=0)
 logo_img = PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=logo_img)
 canvas.grid(column=1, row=0)
 
 # Website Label
-web_label = Label(text="Website:")
+web_label = Label(text="Website:", background=YELLOW, font=(FONT_NAME, 10, "bold"))
 web_label.grid(column=0, row=1, sticky="w")
 
 # Username Label
-user_label = Label(text="Email/User Name:")
+user_label = Label(text="Email/User Name:", background=YELLOW, font=(FONT_NAME, 10, "bold"))
 user_label.grid(column=0, row=2, sticky="w")
 
-# Password Label
-pass_label = Label(text="Password:", anchor="w")  # can use anchor to move the text to left corner here just for show
+# Password Label # can use anchor to move the text to left corner here just for show
+pass_label = Label(text="Password:", background=YELLOW, anchor="w", font=(FONT_NAME, 10, "bold"))
 pass_label.grid(column=0, row=3, sticky="w")  # sticky attribute sets the alignment to west in a grid
 
 # website text input field
-web_entry = Entry(width=55)
+web_entry = Entry(width=33)
 web_entry.grid(column=1, row=1, columnspan=2, sticky="w")  # column span club columns together
 web_entry.focus()
 
 # username text input field
-user_entry = Entry(width=55)
-user_entry.grid(column=1, row=2, columnspan=2, sticky="w")
+user_entry = Entry(width=35)
+user_entry.grid(column=1, row=2, columnspan=2, sticky="ew")
 user_entry.insert(0, "amitrana.com007@yahoo.com")  # insert data into entry at 0
 
 # password text input field
-pass_entry = Entry(width=35)
+pass_entry = Entry(width=33)
 pass_entry.grid(column=1, row=3, sticky="w")
 
 
 # Generate button
-gen_button = Button(text="Generate Password", command=generate_password)
-gen_button.grid(column=2, row=3, sticky="ew")
+gen_button = Button(text="Generate Password", width=20, command=generate_password)
+gen_button.grid(column=2, row=3, sticky="w")
 
-# Add button
+# Add but
 add_button = Button(text="Add", width=36, command=write_to_secure_file)
 add_button.grid(column=1, row=4, columnspan=2, sticky="ew")
+
+# Search button
+search_button = Button(text="Search", width=20, command=search_password)
+search_button.grid(column=2, row=1, sticky="w")
 
 
 window.mainloop()
