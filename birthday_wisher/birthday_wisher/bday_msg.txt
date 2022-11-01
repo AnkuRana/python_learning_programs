@@ -1,0 +1,6 @@
+Hello [name],
+
+[birthday_quote]
+
+
+Amit Rana!
