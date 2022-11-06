@@ -7,3 +7,5 @@
 *.pyc
 *.xml
 *.iml
+*.bat
+iss_loaction.py
