@@ -8,4 +8,4 @@
 *.xml
 *.iml
 *.bat
-iss_loaction.py
+**/api_module_iss_location/iss_loaction.py
