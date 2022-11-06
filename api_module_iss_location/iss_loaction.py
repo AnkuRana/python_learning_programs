@@ -2,11 +2,12 @@ import requests
 from datetime import datetime
 import smtplib
 import time
+import os
 
 MY_LAT = 30.786335
 MY_LONG = 76.798265
 USERNAME = "ankurana.com007@gmail.com"
-APP_PASSWORD = "***********"
+APP_PASSWORD = os.environ.get("EMAIL_PASS")
 
 MESSAGE = "Hey ISS is above you!,\n It's dark and perfect time to catch a glimpse of space station in the sky!" \
           " \n from Amit Rana\n"\
