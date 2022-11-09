@@ -10,7 +10,7 @@ GRAPH_ENDPT = f"{PIXELA_USER_ENDPT}/{USERNAME}/graphs"
 PIXEL_POST_ENDPT = f"{PIXELA_USER_ENDPT}/{USERNAME}/graphs/{GRAPH_ID}"
 
 parameters = {
-    "token": "f41&Q9UyZB$Iy!",
+    "token": TOKEN,
     "username": "ankurana",
     "agreeTermsOfService": "yes",
     "notMinor": "yes"
