@@ -32,10 +32,29 @@ def generate_password():
 # ---------------------------- SEARCH PASSWORD ------------------------------- #
 
 
+def option_changed(*args):
+    return menu.get()
+
+
+def get_list_websites():
+    websites = []
+    try:
+        with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.json") \
+                as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="INFO", message="Database is empty or not created!")
+    else:
+        websites = [website for website in data]
+    return websites
+
+
 def search_password():
-    website_value = web_entry.get().lower()  # get the required data from the entry field
-    if website_value == "":
-        messagebox.showinfo(title="INFO", message="Please enter the website name to search database!")
+    website_value = option_changed()
+    # website_value = list_box.get(list_box.curselection())
+    # website_value = web_entry.get().lower()  # get the required data from the entry field
+    if website_value == "" or website_value == "select website":
+        messagebox.showinfo(title="INFO", message="Please select the website name to search database!")
     else:
         try:
             with open("../../../Users/Amit Rana/OneDrive/Documents/AmitRana/SecureCodes/secure_file_codes.json",
@@ -49,7 +68,8 @@ def search_password():
                 user_name = data[website_value]['username']
                 password = data[website_value]['password']
                 date_time = data[website_value]['datetime']
-                messagebox.showinfo(title=f"Website: {website_value}", message=f"UserName: {user_name}\n"
+                messagebox.showinfo(title=f"Website: {website_value}", message=f"Website: {website_value}\n"
+                                                                               f"UserName: {user_name}\n"
                                                                                f"Password: {password}\n"
                                                                                f"Saved Date: {date_time}\n\n"
                                                                                f"Click ok to copy Password!")
@@ -128,38 +148,50 @@ canvas.grid(column=1, row=0)
 
 # Website Label
 web_label = Label(text="Website:", background=YELLOW, font=(FONT_NAME, 10, "bold"))
-web_label.grid(column=0, row=1, sticky="w")
+web_label.grid(column=0, row=2, sticky="w")
+
+# listbox Label
+listbox_label = Label(text="Database:", background=YELLOW, font=(FONT_NAME, 10, "bold"))
+listbox_label.grid(column=0, row=1, sticky="w")
 
 # Username Label
 user_label = Label(text="Email/User Name:", background=YELLOW, font=(FONT_NAME, 10, "bold"))
-user_label.grid(column=0, row=2, sticky="w")
+user_label.grid(column=0, row=3, sticky="w")
 
 # Password Label # can use anchor to move the text to left corner here just for show
 pass_label = Label(text="Password:", background=YELLOW, anchor="w", font=(FONT_NAME, 10, "bold"))
-pass_label.grid(column=0, row=3, sticky="w")  # sticky attribute sets the alignment to west in a grid
+pass_label.grid(column=0, row=4, sticky="w")  # sticky attribute sets the alignment to west in a grid
 
 # website text input field
 web_entry = Entry(width=33)
-web_entry.grid(column=1, row=1, columnspan=2, sticky="w")  # column span club columns together
+web_entry.grid(column=1, row=2, columnspan=2, sticky="ew")  # column span club columns together
 web_entry.focus()
+
+# get stored website
+list_stored_websites = get_list_websites()
+
+# Menu
+menu = StringVar()
+dropdown = OptionMenu(window, menu, "select website", *list_stored_websites)
+dropdown.config(width=29)
+dropdown.grid(column=1, row=1, columnspan=2, sticky="w")
 
 # username text input field
 user_entry = Entry(width=35)
-user_entry.grid(column=1, row=2, columnspan=2, sticky="ew")
+user_entry.grid(column=1, row=3, columnspan=2, sticky="ew")
 user_entry.insert(0, "amitrana.com007@yahoo.com")  # insert data into entry at 0
 
 # password text input field
 pass_entry = Entry(width=33)
-pass_entry.grid(column=1, row=3, sticky="w")
-
+pass_entry.grid(column=1, row=4, sticky="w")
 
 # Generate button
 gen_button = Button(text="Generate Password", width=20, command=generate_password)
-gen_button.grid(column=2, row=3, sticky="w")
+gen_button.grid(column=2, row=4, sticky="w")
 
 # Add but
 add_button = Button(text="Add", width=36, command=write_to_secure_file)
-add_button.grid(column=1, row=4, columnspan=2, sticky="ew")
+add_button.grid(column=1, row=5, columnspan=2, sticky="ew")
 
 # Search button
 search_button = Button(text="Search", width=20, command=search_password)
