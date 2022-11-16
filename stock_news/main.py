@@ -1,5 +1,6 @@
 import requests
 import os
+import smtplib
 # from newsapi import articles
 NEWS_API = "https://newsapi.org/v2/everything"
 N_API_KEY = os.environ.get("N_API_KEY")
@@ -7,6 +8,9 @@ S_API_KEY = os.environ.get("S_API_KEY")
 STOCK_API = "https://www.alphavantage.co/query"
 STOCK = "TSLA"
 COMPANY_NAME = "Tesla Inc"
+USER_NAME = os.environ.get("USER_NAME")
+APP_PASS = os.environ.get("APP_PASS")
+email_list = ["****@gmail.com", "***@gmail.com"]
 
 n_params = {
     "q": "tesla",
@@ -23,6 +27,17 @@ s_params = {
     "symbol": STOCK,
     "apikey": S_API_KEY
 }
+
+
+def send_email(email, message):
+    # print(message)
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
+        connection.login(user=USER_NAME, password=APP_PASS)
+        connection.sendmail(from_addr=USER_NAME,
+                            to_addrs=email,
+                            msg=f"Subject:Stock Alert: {STOCK} ,"
+                                f" \n\n{message}".encode("utf8"))
 
 
 def get_percent_change(lastdy, daybflastdy):
@@ -46,14 +61,20 @@ stock_response.raise_for_status()
 value_list = list(stock_response.json()["Time Series (Daily)"].values())
 values = get_percent_change(value_list[0]["4. close"], value_list[1]["4. close"])
 
-if values[0] > 3:
+if values[0] > 1:
     news_response = requests.get(NEWS_API, params=n_params)
     news_response.raise_for_status()
+    message = f"hey! \n\nCheck out latest news of {STOCK} stock! \n\n"
     for article in news_response.json()["articles"]:
+        message += f"TSLA: {values[0]}%{values[1]}\n Headline: {article['title']} \n Brief: {article['description']}" \
+                   f" \nBrief: {article['description']} \n\n"
         print(f"TSLA: {values[0]}%{values[1]}\n")
         print(f"Headline: {article['title']} \n")
         print(f"Brief: {article['description']} \n")
         print("*************************\n")
+    message += "Best Regards \nStock alert App"
+    for email in email_list:
+        send_email(email, message)
 
 
 ## STEP 1: Use https://www.alphavantage.co
